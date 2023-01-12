@@ -1,0 +1,59 @@
+1.
+DELETE FROM postac WHERE rodzaj="wiking" ORDER BY wiek DESC LIMIT 2;
+
+SET FOREIGN_KEY_CHECKS=0;
+ALTER TABLE postac MODIFY COLUMN id_postaci int(11) not null;
+SET FOREIGN_KEY_CHECkS=0;
+ALTER TABLE postac DROP PRIMARY KEY;
+
+2.
+ALTER TABLE postac ADD pesel BIGINT(11) not null;
+ALTER TABLE postac ADD PRIMARY KEY(pesel);
+UPDATE postac set pesel=12345678901 where id_postaci=1;
+UPDATE postac set pesel=12345678902 where id_postaci=2; 
+UPDATE postac set pesel=12345678903 where id_postaci=3; 
+UPDATE postac set pesel=12345678904 where id_postaci=4; 
+UPDATE postac set pesel=12345678905 where id_postaci=5; 
+UPDATE postac set pesel=12345678906 where id_postaci=6;
+
+ALTER TABLE postac MODIFY rodzaj enum("wiking", "ptak", "kobieta", "syrena");
+INSERT INTO postac(id_postaci, nazwa, rodzaj, data_ur, wiek, pesel)
+VALUES(7, "Gertruda Nieszczera", "syrena", "1001-01-01", 799, 12345678907);
+
+3.
+UPDATE postac SET nazwa_statku="Pedziwiatr" WHERE nazwa like "%a%";
+
+UPDATE statek set max_ladownosc=max_ladownosc*(0.7) 
+WHERE YEAR(data_wodowania) BETWEEN 1901 and 2000;
+
+ALTER TABLE postac ADD CHECK(wiek>1000);
+
+4.
+ALTER TABLE postac MODIFY rodzaj ENUM("wiking", "ptak", "kobieta", "syrena","waz");
+
+INSERT INTO postac(id_postaci, nazwa, data_ur, wiek, pesel)
+VALUES(8, "Loko", "waz", 1678-01-01, 2, 12345678908);
+
+CREATE TABLE marynarz select * FROM postac WHERE nazwa_statku NOT NULL;
+ALTER TABLE marynarz ADD PRIMARY KEY(pesel);
+ALTER TABLE marynarz ADD FOREIGN KEY(statek) REFERENCES statek(nazwa_statku);
+ALTER TABLE marynarz ADD FOREIGN KEY(id_postaci) REFERENCES postac(id_postaci);
+
+5.
+UPDATE marynarz SET statek=NULL WHERE statek IS NOT NULL;
+UPDATE postac SET statek=NULL where statek IS NOT NULL;
+DELETE FROM postac WHERE nazwa="Marcin";
+DELETE FROM marynarz WHERE nazwa="Marcin";
+DELETE FROM statek;
+DROP TABLE statek;
+SET FOREIGN_KEY_CHECKS=0;
+ALTER TABLE postac DROP COLUMN statek;
+ALTER TABLE marynarz DROP COLUMN statek;
+SET FOREIGN_KEY_CHEKCS=0;
+
+CREATE TABLE zwierz(id INT PRIMARY KEY AUTO_INCREMENT, 
+nazwa VARCHAR(100),
+wiek INT UNSIGNED);
+INSERT INTO zwiwerz(nazwa,wiek) select nazwa, wiek, from postac where rodzaj like "ptak"
+or rodzaj like "waz";
+
