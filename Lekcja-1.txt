@@ -1,0 +1,98 @@
+1.
+CREATE TABLE postac (id_postaci INT PRIMARY KEY AUTO_INCREMENT NOT NULL, 
+nazwa VARCHAR(40) NOT NULL, 
+rodzaj ENUM("wiking", "ptak", "kobieta"), 
+data_ur DATE, wiek INT UNSIGNED);
+
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ("Bjorn", "wiking", 1640-02-12, 40);
+
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ("Drozd", "ptak", 1678-12-12, 2);
+
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ("Tesciowa", "kobieta", 1592-03-04, 80);
+
+UPDATE postac SET wiek=88 WHERE nazwa="Tesciowa";
+
+2.
+CREATE TABLE walizka (id_walizki INT PRIMARY KEY AUTO_INCREMENT,
+pojemnosc INT UNSIGNED,
+kolor ENUM("rozowy", "czerwony", "teczowy", "zolty"),
+id_wlasciciela INT FOREIGN KEY REFERENCES postac(id_postaci)); 
+
+ALTER TABLE walizka ALTER kolor SET DEFAULT "rozowy";
+
+INSERT INTO walizka(pojemnosc, kolor, id_wlasciciela)
+VALUES(40, "zolty", 1);
+
+INSERT INTO walizka(pojemnosc, id_wlasciciela)
+VALUES(50, 3);
+
+3.
+CREATE TABLE izba(adres_budynku VARCHAR(40) NOT NULL PRIMARY KEY,
+nazwa_izby VARCHAR(40) NOT NULL PRIMARY KEY,
+metraz INT UNSIGNED,
+wlasciciel FOREIGN KEY REFERENCES postac(id_postaci);
+
+UPDATE izba SET wlasciciel=NULL WHERE wlasciciel='';
+
+ALTER TABLE izba ADD kolor VARCHAR(40) DEFAULT "czarny" AFTER "metraz";
+
+INSERT INTO izba(adres_budynku, nazwa_izby, metraz, kolor, wlasciciel)
+VALUES("Grzybowa 8", "Spizarnia", 30, "brazowy", 1);
+
+
+4.
+CREATE TABLE przetwory(id_przetworu INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+rok_produkcji SMALLINT(4) DEFAULT 1654,
+id_wykonawcy INT NOT NULL FOREIGN KEY REFERENCES postac(id_postaci),
+zawartosc VARCHAR(100),
+dodatek VARCHAR(100) DEFAULT "papryczka chilli",
+id_konsumenta INT NOT NULL FOREIGN KEY REFERENCES postac(id_postaci));
+
+INSERT INTO przetwory(id_wykonawcy, zawartosc, id_konsumenta)
+VALUES (1, "bigos", 3);
+
+5.
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ("Dziku", "wiking", 1655-08-19, 25);
+
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ("Marian", "wiking", 1630-11-16, 50);
+
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ("Marcin", "wiking", 1640-02-12, 40);
+
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ("Wojo", "wiking", 1675-02-16, 5);
+
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ("Mietek", "wiking", 1649-02-09, 31);
+
+CREATE TABLE statek(nazwa_statku VARCHAR(40) PRIMARY KEY NOT NULL,
+rodzaj_statku ENUM("maly", "duzy"),
+data_wodowania DATE,
+max_ladownosc INT UNSIGNED);
+
+INSERT INTO statek(nazwa_statku, rodzaj_statku, data_wodowania, max_ladownosc)
+VALUES("Pedziwiatr", "duzy", 1680-02-12, 15);
+
+INSERT INTO statek(nazwa_statku, rodzaj_statku, data_wodowania, max_ladownosc)
+VALUES("Rybak", "maly", 1670-01-01, 2);
+
+ALTER TABLE postac ADD funkcja VARCHAR(40);
+
+INSERT INTO postac(funkcja)
+VALUES("kapitan) WHERE nazwa="Bjorn";
+
+ALTER TABLE postac ADD statek VARCHAR(40);
+
+ALTER TABLE postac ADD FOREIGN KEY (statek) REFERENCES statek(nazwa_statku);
+
+INSERT INTO postac(statek)
+VALUES("Pedziwiatr") WHERE rodzaj="wiking" or rodzaj="ptak";
+
+DELETE FROM izba WHERE nazwa_izby="Spizarnia";
+
+DROP TABLE izba;
